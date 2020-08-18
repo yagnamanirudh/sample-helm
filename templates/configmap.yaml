@@ -1,0 +1,20 @@
+{{ if .Values.configmap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: "{{ template "sample.fullname" . }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+    release: "{{ .Release.Name }}"
+{{- with .Values.configmap.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: "{{ template "sample.fullname" . }}-config"
+data:
+{{- range $key, $value := .Values.configmap }}
+  {{ $key }}: |-
+{{ $value | default "" | indent 4 }}
+{{- end -}}
+{{- end -}}
